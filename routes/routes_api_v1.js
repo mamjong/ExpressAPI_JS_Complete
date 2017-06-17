@@ -188,13 +188,21 @@ router.post('/rentals/:customerId/:inventoryId', function (req, res) {
     var customerId = req.params.customerId;
     var inventoryId = req.params.inventoryId;
 
-    var rentalDate = req.body.RentalDate;
-    var returnDate = req.body.ReturnDate;
     var staffId = req.body.StaffId;
 
+    var date;
+    date = new Date();
+    date = date.getUTCFullYear() + '-' +
+        ('00' + (date.getUTCMonth()+1)).slice(-2) + '-' +
+        ('00' + date.getUTCDate()).slice(-2) + ' ' +
+        ('00' + date.getUTCHours()).slice(-2) + ':' +
+        ('00' + date.getUTCMinutes()).slice(-2) + ':' +
+        ('00' + date.getUTCSeconds()).slice(-2);
+    console.log(date);
+
     var query = {
-        sql : 'INSERT INTO `rental`(rental_date, inventory_id, customer_id, return_date, staff_id) VALUES (?, ?, ?, ?, ?)',
-        values : [rentalDate, inventoryId, customerId, returnDate, staffId],
+        sql : 'INSERT INTO `rental`(rental_date, inventory_id, customer_id, return_date, staff_id) VALUES (?, ?, ?, ?)',
+        values : [date, inventoryId, customerId, staffId],
         timeout : 2000
     };
     res.contentType("application/json");
