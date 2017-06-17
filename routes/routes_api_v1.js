@@ -209,18 +209,28 @@ router.post('/rentals/:customerId/:inventoryId', function (req, res) {
     })
 });
 
-router.put('/rentals/:customerId/:inventoryId', function (req, res) {
-    var customerId = req.params.customerId;
-    var inventoryId = req.params.inventoryId;
+router.put('/rentals', function (req, res) {
+    var customerId = req.query.customerId || "";
+    var inventoryId = req.query.inventoryId || "";
 
     var rentalDate = req.body.RentalDate;
     var returnDate = req.body.ReturnDate;
     var staffId = req.body.StaffId;
 
+    var date;
+    date = new Date();
+    date = date.getUTCFullYear() + '-' +
+        ('00' + (date.getUTCMonth()+1)).slice(-2) + '-' +
+        ('00' + date.getUTCDate()).slice(-2) + ' ' +
+        ('00' + date.getUTCHours()).slice(-2) + ':' +
+        ('00' + date.getUTCMinutes()).slice(-2) + ':' +
+        ('00' + date.getUTCSeconds()).slice(-2);
+    console.log(date);
+
     var query = {
         sql: 'UPDATE `rental` SET rental_date = ?, return_date = ?, staff_id = ? ' +
         'WHERE customer_id = ' + customerId + ' AND inventory_id = ' + inventoryId + ';',
-        values: [rentalDate, returnDate, staffId],
+        values: [rentalDate, date, staffId],
         timeout: 2000
     };
     res.contentType("application/json");
