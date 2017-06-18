@@ -153,7 +153,7 @@ router.get('/films', function (req, res) {
 router.get('/filmid/:filmid', function (req, res) {
     var filmid = req.params.filmid || "";
 
-    var query = "SELECT * FROM `film` inner join inventory on film.film_id = inventory.film_id where film.film_id = " + filmid+ ";" ;
+    var query = "SELECT * FROM `film` inner join inventory on film.film_id = inventory.film_id where film.film_id = " + filmid + ";" ;
 
     pool.getConnection((function (err, connection) {
         if(err){
@@ -169,6 +169,29 @@ router.get('/filmid/:filmid', function (req, res) {
 });
 
 
+router.get('/rentalinfo/:inventortId', function (req, res) {
+    var inventoryId = req.params.inventortId || "";
+
+
+
+
+    var query = "select * from inventory" +
+        " inner join rental on rental.inventory_id = inventory.inventory_id" +
+        " where inventory.inventory_id = " + inventoryId + ";";
+
+    pool.getConnection((function (err, connection) {
+        if(err){
+            throw err
+        }connection.query(query, function (err, rows, fields) {
+            connection.release();
+            if(err){
+                throw err
+            }
+            res.status(200).json(rows);
+        });
+    }));
+});
+
 router.all('*', function(req, res, next) {
     var token = (req.header('X-Access-Token')) || '';
 
@@ -182,11 +205,9 @@ router.all('*', function(req, res, next) {
     });
 });
 
-router.post('/rentals/:customerId/:inventoryId', function (req, res) {
+router.post('/rent/:customerId/:inventoryId', function (req, res) {
     var customerId = req.params.customerId;
     var inventoryId = req.params.inventoryId;
-
-    var staffId = req.body.StaffId;
 
     var date;
     date = new Date();
@@ -199,8 +220,8 @@ router.post('/rentals/:customerId/:inventoryId', function (req, res) {
     console.log(date);
 
     var query = {
-        sql : 'INSERT INTO `rental`(rental_date, inventory_id, customer_id, staff_id) VALUES (?, ?, ?, ?)',
-        values : [date, inventoryId, customerId, staffId],
+        sql : 'INSERT INTO `rental`(rental_date, inventory_id, customer_id) VALUES (?, ?, ?)',
+        values : [date, inventoryId, customerId],
         timeout : 2000
     };
 
