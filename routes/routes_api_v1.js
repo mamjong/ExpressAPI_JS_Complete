@@ -201,10 +201,11 @@ router.post('/rentals/:customerId/:inventoryId', function (req, res) {
     console.log(date);
 
     var query = {
-        sql : 'INSERT INTO `rental`(rental_date, inventory_id, customer_id, return_date, staff_id) VALUES (?, ?, ?, ?)',
+        sql : 'INSERT INTO `rental`(rental_date, inventory_id, customer_id, staff_id) VALUES (?, ?, ?, ?)',
         values : [date, inventoryId, customerId, staffId],
         timeout : 2000
     };
+
     res.contentType("application/json");
 
     pool.getConnection(function (err, connection) {
