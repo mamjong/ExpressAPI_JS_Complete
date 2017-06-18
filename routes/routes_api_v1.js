@@ -153,10 +153,7 @@ router.get('/films', function (req, res) {
 router.get('/filmid/:filmid', function (req, res) {
     var filmid = req.params.filmid || "";
 
-
-
-
-    var query = "SELECT * FROM `film` inner join inventory on film.film_id = inventory.film_id inner join rental on rental.inventory_id = inventory.inventory_id where film.film_id = " + filmid+ ";" ;
+    var query = "SELECT * FROM `film` inner join inventory on film.film_id = inventory.film_id where film.film_id = " + filmid+ ";" ;
 
     pool.getConnection((function (err, connection) {
         if(err){
@@ -170,6 +167,7 @@ router.get('/filmid/:filmid', function (req, res) {
         });
     }));
 });
+
 
 router.all('*', function(req, res, next) {
     var token = (req.header('X-Access-Token')) || '';
