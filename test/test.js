@@ -22,6 +22,18 @@ describe('film request', function () {
     });
 });
 
+describe('rental info request', function () {
+    it('Test GET /api/v1/rentalinfo/10', function (done) {
+        chai.request(server)
+            .get('/api/v1/films?offset=20&count=10')
+            .end(function (err, res) {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
+            });
+    });
+});
+
 describe('film request', function() {
     it('Test GET /api/v1/films', function(done) {
         chai.request(server)
@@ -139,7 +151,6 @@ describe('delete rental', function() {
             .set("X-Access-Token", token)
             .end(function(err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('object');
                 res.body.should.be.a('object');
                 res.body.should.have.property('affectedRows');
                 res.body.should.have.property('affectedRows', 1);
