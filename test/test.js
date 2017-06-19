@@ -46,24 +46,50 @@ describe('rental request', function () {
     });
 });
 
+
+var date;
+date = new Date();
+date = date.getUTCFullYear() + '-' +
+    ('00' + (date.getUTCMonth()+1)).slice(-2) + '-' +
+    ('00' + date.getUTCDate()).slice(-2) + ' ' +
+    ('00' + date.getUTCHours()).slice(-2) + ':' +
+    ('00' + date.getUTCMinutes()).slice(-2) + ':' +
+    ('00' + date.getUTCSeconds()).slice(-2);
+
+var username = date;
+var password = date;
+
+describe('register test', function () {
+    it('Test POST /api/v1/register', function (done) {
+        chai.request(server)
+            .post('/api/v1/register')
+            .send({"username" : username, "password" : password})
+            .end(function (err, res) {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('affectedRows');
+                res.body.should.have.property('affectedRows', 1);
+                done();
+            });
+    });
+});
+
 describe('rental POST', function () {
     var token = "";
     before(function (done) {
         chai.request(server)
             .post('/api/v1/login')
-            .send({"username": "test", "password": "test"})
+            .send({"username": username, "password": password})
             .end(function (err, res) {
                 var result = JSON.parse(res.text);
                 token = result.token;
-                console.log(token);
                 done();
             });
     });
-    it('Test POST /api/v1/rentals/:customerId/:inventoryId', function (done) {
+    it('Test POST /api/v1/rent/:customerId/:inventoryId', function (done) {
         chai.request(server)
-            .post('/api/v1/rentals/3/10')
+            .post('/api/v1/rent/8/10')
             .set("X-Access-Token", token)
-            .send({"RentalDate": now, "ReturnDate": "2019-08-19 22:53:30", "StaffId": "15"})
             .end(function (err, res) {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
@@ -76,7 +102,7 @@ describe('rental PUT', function () {
     before(function (done) {
         chai.request(server)
             .post('/api/v1/login')
-            .send({"username": "test", "password": "test"})
+            .send({"username": username, "password": password})
             .end(function (err, res) {
                 var result = JSON.parse(res.text);
                 token = result.token;
@@ -84,11 +110,10 @@ describe('rental PUT', function () {
                 done();
             });
     });
-    it('Test PUT /api/v1/rentals/:customerId/:inventoryId', function (done) {
+    it('Test PUT /api/v1/rentals?customerId=8&inventoryId=10', function (done) {
         chai.request(server)
-            .put('/api/v1/rentals/3/20')
+            .put('/api/v1/rentals?customerId=8&inventoryId=10')
             .set("X-Access-Token", token)
-            .send({ "RentalDate" : now, "ReturnDate" : "2020-06-24 22:59:23", "StaffId" : "20" })
             .end(function (err, res) {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
@@ -110,7 +135,7 @@ describe('delete rental', function() {
     });
     it('test DELETE/api/v1/rental', function(done) {
         chai.request(server)
-            .delete('/api/v1/rental?customerId=3&inventoryId=10')
+            .delete('/api/v1/rental?customerId=8&inventoryId=10')
             .set("X-Access-Token", token)
             .end(function(err, res) {
                 res.should.have.status(200);

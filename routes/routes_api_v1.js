@@ -242,8 +242,9 @@ router.put('/rentals', function (req, res) {
     var inventoryId = req.query.inventoryId || "";
 
     var rentalDate = req.body.RentalDate;
-    var returnDate = req.body.ReturnDate;
     var staffId = req.body.StaffId;
+
+    console.log("request =  " + req);
 
     var date;
     date = new Date();
@@ -256,9 +257,9 @@ router.put('/rentals', function (req, res) {
     console.log(date);
 
     var query = {
-        sql: 'UPDATE `rental` SET rental_date = ?, return_date = ?, staff_id = ? ' +
+        sql: 'UPDATE `rental` SET return_date = ?' +
         'WHERE customer_id = ' + customerId + ' AND inventory_id = ' + inventoryId + ';',
-        values: [rentalDate, date, staffId],
+        values: [date],
         timeout: 2000
     };
     res.contentType("application/json");
